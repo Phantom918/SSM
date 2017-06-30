@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="userMapper">
+	
+	<resultMap type="com.qin.base.entity.User" id="BaseUser">
+		<id property="id" column="id" />
+		<result property="username"  column="user_name" />
+		<result property="password"  column="password" />
+		<association property="role" javaType="com.qin.base.entity.Role" select="findRoleById" column="role_id"/>
+	</resultMap>
+	
+	<resultMap type="com.qin.base.entity.Role" id="BaseRole">
+		<id property="id" column="id" />
+		<result property="name"  column="name" />
+	</resultMap>
+	
+	<sql id="base_column">
+	    id, user_name,password,role_id
+	</sql>
+	
+	<select id="selectByQuery" parameterType="user" resultMap="BaseUser">
+		select 
+		<include refid="base_column" />
+		from user 
+		<where>
+			<if test="username != null and username != ''">
+				user_name like "%"#{username}"%"
+			</if>
+		</where>
+	</select>
+	
+	<select id="findRoleById"  resultMap="BaseRole">
+		select id, name from role WHERE id = #{role_id}
+	</select>
+
+</mapper>
